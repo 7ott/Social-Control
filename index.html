@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Control — Social Media Management Platform</title>
+<meta name="description" content="Social Control is a platform for scheduling, publishing and reporting on social media from one dashboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0b14;
+    --panel:#12131f;
+    --panel-2:#181a2b;
+    --paper:#eef0f7;
+    --dim:#8b8fa3;
+    --signal:#6c5ce7;
+    --signal-2:#00d9ff;
+    --line:rgba(238,240,247,0.1);
+    --mono:'JetBrains Mono', monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'DM Sans', sans-serif;
+    overflow-x:hidden;
+    line-height:1.7;
+  }
+  a{color:inherit; text-decoration:none;}
+  ul{list-style:none;}
+  .container{max-width:1200px; margin:0 auto; padding:0 6vw;}
+
+  h1,h2,h3{font-family:'Lexend', sans-serif; font-weight:700; letter-spacing:-0.02em;}
+
+  .eyebrow{
+    font-family:var(--mono); font-size:0.76rem; letter-spacing:0.12em;
+    text-transform:uppercase; color:var(--signal-2);
+    display:flex; align-items:center; gap:10px; margin-bottom:16px; font-weight:600;
+  }
+  .eyebrow::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--signal-2); box-shadow:0 0 10px var(--signal-2);}
+
+  /* ---------- Header ---------- */
+  header{
+    position:fixed; inset:0 0 auto 0; z-index:100;
+    background:rgba(10,11,20,0.82);
+    backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-wrap{max-width:1200px; margin:0 auto; padding:16px 6vw; display:flex; align-items:center; justify-content:space-between; gap:20px;}
+  .brand{font-family:'Lexend', sans-serif; font-weight:700; font-size:1.15rem; display:flex; align-items:center; gap:10px;}
+  .brand .mark{width:26px; height:26px; border-radius:8px; background:linear-gradient(135deg, var(--signal), var(--signal-2)); flex-shrink:0;}
+  nav ul{display:flex; gap:28px;}
+  nav a{font-size:0.9rem; color:var(--dim); transition:color .2s; font-weight:500;}
+  nav a:hover{color:var(--paper);}
+  .nav-cta{
+    background:var(--signal); color:#fff;
+    font-weight:700; font-size:0.85rem;
+    padding:11px 22px; transition:transform .2s ease, background .2s ease;
+    border-radius:8px;
+  }
+  .nav-cta:hover{transform:translateY(-2px); background:#5a49d1;}
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:22px; height:2px; background:var(--paper);}
+
+  /* ---------- Hero ---------- */
+  .hero{min-height:100vh; display:flex; align-items:center; padding-top:120px; position:relative; overflow:hidden;}
+  .hero::before{
+    content:""; position:absolute; top:-200px; right:-150px; width:600px; height:600px; border-radius:50%;
+    background:radial-gradient(circle, rgba(108,92,231,0.25), transparent 70%); filter:blur(20px);
+  }
+  .hero-grid{display:grid; grid-template-columns:1.1fr 0.9fr; gap:50px; align-items:center; width:100%; position:relative;}
+  .hero h1{font-size:clamp(2.4rem, 5.4vw, 3.9rem); line-height:1.14; margin-bottom:24px;}
+  .hero h1 .hl{background:linear-gradient(90deg, var(--signal), var(--signal-2)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .hero .lead{font-size:1.12rem; color:var(--dim); max-width:500px; margin-bottom:40px;}
+  .btn-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .btn{display:inline-flex; align-items:center; gap:10px; padding:15px 28px; font-weight:700; font-size:0.95rem; border:none; cursor:pointer; transition:transform .25s ease, background .25s ease; border-radius:8px;}
+  .btn-primary{background:var(--signal); color:#fff;}
+  .btn-primary:hover{transform:translateY(-3px); background:#5a49d1;}
+  .btn-ghost{background:transparent; color:var(--paper); border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--paper);}
+
+  /* Dashboard mockup */
+  .dash-card{position:relative; border:1px solid var(--line); border-radius:16px; background:var(--panel); padding:20px; box-shadow:0 30px 80px rgba(0,0,0,0.4);}
+  .dash-topbar{display:flex; gap:6px; margin-bottom:18px;}
+  .dash-topbar span{width:9px; height:9px; border-radius:50%; background:var(--line);}
+  .dash-row{display:flex; gap:14px; margin-bottom:14px;}
+  .dash-tile{flex:1; background:var(--panel-2); border-radius:10px; padding:16px; border:1px solid var(--line);}
+  .dash-tile .k{font-family:var(--mono); font-size:0.68rem; color:var(--dim); margin-bottom:6px; display:block;}
+  .dash-tile .v{font-family:'Lexend', sans-serif; font-weight:700; font-size:1.3rem; color:var(--signal-2);}
+  .dash-toggle-row{display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--panel-2); border-radius:10px; margin-bottom:10px; border:1px solid var(--line);}
+  .dash-toggle-row span{font-size:0.85rem; color:var(--paper);}
+  .toggle{width:34px; height:18px; border-radius:20px; background:var(--signal); position:relative; flex-shrink:0;}
+  .toggle::after{content:""; position:absolute; top:2px; right:2px; width:14px; height:14px; border-radius:50%; background:#fff;}
+  .toggle.off{background:var(--panel);}
+  .toggle.off::after{right:auto; left:2px;}
+  .dash-chart{height:70px; display:flex; align-items:flex-end; gap:6px; padding:10px 14px; background:var(--panel-2); border-radius:10px; border:1px solid var(--line);}
+  .dash-chart span{flex:1; background:linear-gradient(180deg, var(--signal-2), var(--signal)); border-radius:2px; opacity:0.85;}
+
+  /* ---------- Ticker ---------- */
+  .ticker{border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:16px 0; overflow:hidden; white-space:nowrap; background:var(--panel);}
+  .ticker-track{display:inline-flex; gap:50px; animation:scroll-x 26s linear infinite;}
+  .ticker-track span{font-family:var(--mono); font-size:0.82rem; letter-spacing:0.04em; color:var(--dim); display:inline-flex; align-items:center; gap:14px; font-weight:500;}
+  .ticker-track span::after{content:"//"; color:var(--signal-2);}
+  @keyframes scroll-x{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+  /* ---------- Sections ---------- */
+  section{padding:110px 0;}
+  .section-head{display:flex; justify-content:space-between; align-items:flex-end; gap:30px; margin-bottom:56px; flex-wrap:wrap;}
+  .section-head h2{font-size:clamp(1.9rem, 4.2vw, 2.7rem);}
+  .section-head p{color:var(--dim); max-width:380px; font-size:0.98rem;}
+  .reveal{opacity:0; transform:translateY(26px); transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  /* ---------- Features ---------- */
+  .features-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .f-card{background:var(--ink); padding:38px 28px; transition:background .3s ease;}
+  .f-card:hover{background:var(--panel);}
+  .f-num{font-family:var(--mono); color:var(--signal-2); font-size:0.85rem; margin-bottom:22px; display:block;}
+  .f-card h3{font-size:1.15rem; font-weight:700; margin-bottom:10px; font-family:'Lexend',sans-serif;}
+  .f-card p{color:var(--dim); font-size:0.9rem;}
+
+  /* ---------- Steps ---------- */
+  .steps-list{border-top:1px solid var(--line);}
+  .step-item{display:grid; grid-template-columns:80px 1fr 240px; gap:30px; align-items:center; padding:30px 0; border-bottom:1px solid var(--line); transition:padding .3s ease;}
+  .step-item:hover{padding-inline-start:14px;}
+  .step-tag{font-family:var(--mono); color:var(--signal-2); font-size:0.9rem;}
+  .step-item h3{font-size:1.15rem; font-weight:700; font-family:'Lexend',sans-serif;}
+  .step-item p{color:var(--dim); font-size:0.88rem;}
+
+  /* ---------- Stats ---------- */
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:30px;}
+  .stat b{font-family:'Lexend', sans-serif; font-size:2.1rem; color:var(--signal-2); display:block;}
+  .stat span{font-family:var(--mono); font-size:0.76rem; color:var(--dim);}
+
+  /* ---------- Contact ---------- */
+  .contact-grid{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:start;}
+  .info-row{display:flex; gap:20px; padding:20px 0; border-bottom:1px solid var(--line);}
+  .info-row .label{font-family:var(--mono); font-size:0.74rem; color:var(--dim); width:110px; flex-shrink:0; padding-top:2px;}
+  .info-row .value a{color:var(--signal-2); transition:opacity .2s;}
+  .info-row .value a:hover{opacity:0.75;}
+  .contact-cta{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:48px 38px;}
+  .contact-cta h3{font-size:1.5rem; margin-bottom:16px;}
+  .contact-cta p{color:var(--dim); margin-bottom:28px; font-size:0.95rem;}
+
+  footer{padding:40px 0; border-top:1px solid var(--line);}
+  .footer-grid{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;}
+  .footer-grid p{font-family:var(--mono); font-size:0.75rem; color:var(--dim);}
+  .footer-links{display:flex; gap:22px;}
+  .footer-links a{font-size:0.8rem; color:var(--dim); transition:color .2s;}
+  .footer-links a:hover{color:var(--paper);}
+
+  @media (max-width:880px){
+    nav ul, .nav-cta{display:none;}
+    .burger{display:flex;}
+    .hero-grid{grid-template-columns:1fr;}
+    .dash-card{order:-1;}
+    .features-grid{grid-template-columns:1fr;}
+    .step-item{grid-template-columns:50px 1fr;}
+    .step-item p{grid-column:2/3;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .contact-grid{grid-template-columns:1fr;}
+    section{padding:70px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-wrap">
+    <div class="brand"><span class="mark"></span>Social Control</div>
+    <nav>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="#contact" class="nav-cta">GET STARTED</a>
+    <button class="burger" aria-label="menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <div class="eyebrow">SOCIAL MEDIA MANAGEMENT PLATFORM</div>
+      <h1>Every channel.<br><span class="hl">One dashboard.</span></h1>
+      <p class="lead">Social Control puts scheduling, publishing, approvals and reporting for every platform in one place — so your team stops switching tabs.</p>
+      <div class="btn-row">
+        <a href="#contact" class="btn btn-primary">Get started →</a>
+        <a href="#features" class="btn btn-ghost">See features</a>
+      </div>
+    </div>
+    <div class="dash-card">
+      <div class="dash-topbar"><span></span><span></span><span></span></div>
+      <div class="dash-row">
+        <div class="dash-tile"><span class="k">SCHEDULED</span><span class="v">128</span></div>
+        <div class="dash-tile"><span class="k">ENGAGEMENT</span><span class="v">+32%</span></div>
+      </div>
+      <div class="dash-toggle-row"><span>Instagram</span><div class="toggle"></div></div>
+      <div class="dash-toggle-row"><span>TikTok</span><div class="toggle"></div></div>
+      <div class="dash-toggle-row"><span>X / Twitter</span><div class="toggle off"></div></div>
+      <div class="dash-chart" aria-hidden="true">
+        <span style="height:30%"></span>
+        <span style="height:55%"></span>
+        <span style="height:40%"></span>
+        <span style="height:70%"></span>
+        <span style="height:50%"></span>
+        <span style="height:85%"></span>
+        <span style="height:65%"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span>CONTENT SCHEDULING</span>
+    <span>ANALYTICS DASHBOARD</span>
+    <span>MULTI-PLATFORM PUBLISHING</span>
+    <span>TEAM COLLABORATION</span>
+    <span>APPROVAL WORKFLOWS</span>
+    <span>AUTOMATED REPORTING</span>
+    <span>CONTENT SCHEDULING</span>
+    <span>ANALYTICS DASHBOARD</span>
+    <span>MULTI-PLATFORM PUBLISHING</span>
+    <span>TEAM COLLABORATION</span>
+    <span>APPROVAL WORKFLOWS</span>
+    <span>AUTOMATED REPORTING</span>
+  </div>
+</div>
+
+<section id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">FEATURES</span>
+        <h2>Built for teams, not solo posting</h2>
+      </div>
+      <p>Everything a social team needs to plan, publish and prove results.</p>
+    </div>
+    <div class="features-grid reveal">
+      <div class="f-card">
+        <span class="f-num">01</span>
+        <h3>Content Scheduling</h3>
+        <p>Plan and queue posts across every platform from one calendar.</p>
+      </div>
+      <div class="f-card">
+        <span class="f-num">02</span>
+        <h3>Analytics Dashboard</h3>
+        <p>Real-time performance data, without exporting to a spreadsheet.</p>
+      </div>
+      <div class="f-card">
+        <span class="f-num">03</span>
+        <h3>Multi-Platform Publishing</h3>
+        <p>Instagram, TikTok, Facebook and X, published from a single draft.</p>
+      </div>
+      <div class="f-card">
+        <span class="f-num">04</span>
+        <h3>Team Collaboration</h3>
+        <p>Assign drafts, leave comments and keep everyone in sync.</p>
+      </div>
+      <div class="f-card">
+        <span class="f-num">05</span>
+        <h3>Approval Workflows</h3>
+        <p>Nothing goes live without the right sign-off.</p>
+      </div>
+      <div class="f-card">
+        <span class="f-num">06</span>
+        <h3>Automated Reporting</h3>
+        <p>Client-ready reports generated on a schedule you set.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">HOW IT WORKS</span>
+        <h2>Live in an afternoon</h2>
+      </div>
+      <p>No lengthy onboarding — connect your accounts and go.</p>
+    </div>
+    <div class="steps-list reveal">
+      <div class="step-item">
+        <span class="step-tag">01</span>
+        <h3>Connect your accounts</h3>
+        <p>Link your social profiles in a few clicks, securely.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-tag">02</span>
+        <h3>Plan your content</h3>
+        <p>Build a calendar and route drafts through approval.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-tag">03</span>
+        <h3>Publish everywhere</h3>
+        <p>Posts go out on schedule, formatted for each platform.</p>
+      </div>
+      <div class="step-item">
+        <span class="step-tag">04</span>
+        <h3>Track the results</h3>
+        <p>Watch performance roll in and report on what worked.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div style="border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:50px 0; background:var(--panel);">
+  <div class="container stats-grid reveal">
+    <div class="stat"><b>06</b><span>CORE FEATURES</span></div>
+    <div class="stat"><b>CAIRO</b><span>HOME BASE</span></div>
+    <div class="stat"><b>24H</b><span>RESPONSE TIME</span></div>
+    <div class="stat"><b>01</b><span>DASHBOARD FOR EVERYTHING</span></div>
+  </div>
+</div>
+
+<section id="contact">
+  <div class="container">
+    <div class="section-head reveal">
+      <div>
+        <span class="eyebrow">CONTACT</span>
+        <h2>Let's set up your workspace</h2>
+      </div>
+    </div>
+    <div class="contact-grid reveal">
+      <div class="contact-info">
+        <div class="info-row">
+          <span class="label">COMPANY</span>
+          <span class="value">Social Control</span>
+        </div>
+        <div class="info-row">
+          <span class="label">ADDRESS</span>
+          <span class="value">30 Ramsis St, Cairo, Cairo 11522, Egypt</span>
+        </div>
+        <div class="info-row">
+          <span class="label">PHONE</span>
+          <span class="value"><a href="tel:+201044556677">+20 104 455 6677</a></span>
+        </div>
+        <div class="info-row">
+          <span class="label">WEBSITE</span>
+          <span class="value"><a href="https://socialcontrol.app/" target="_blank" rel="noopener">socialcontrol.app</a></span>
+        </div>
+      </div>
+      <div class="contact-cta">
+        <h3>Want a walkthrough?</h3>
+        <p>Tell us about your team and how many channels you manage — we'll set up a demo within a day.</p>
+        <a href="tel:+201044556677" class="btn btn-primary">Call +20 104 455 6677</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container footer-grid">
+    <p>© 2026 SOCIAL CONTROL — ALL RIGHTS RESERVED</p>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#how">How It Works</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.15});
+  revealEls.forEach(el=>io.observe(el));
+
+  const burger = document.querySelector('.burger');
+  const navEl = document.querySelector('nav');
+  burger.addEventListener('click', ()=>{
+    navEl.style.display = navEl.style.display === 'block' ? 'none' : 'block';
+  });
+</script>
+</body>
+</html>
